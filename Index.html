@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Substack 360 AI Agent Hub</title>
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%23333333'/><rect x='80' y='0' width='20' height='20' fill='%23ff6719'/><text x='50' y='40' font-family='Arial' font-size='14' font-weight='bold' text-anchor='middle' fill='%23333333'>S360</text><text x='50' y='80' font-family='Arial' font-size='32' font-weight='900' text-anchor='middle' fill='%23ff6719'>AI</text></svg>">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23ff6719'><path d='M17 3H7c-1.1 0-2 .9-2 2v16l7-3 7 3V5c0-1.1-.9-2-2-2z'/></svg>">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Playfair+Display:wght@400;500;600;700;800;900&display=swap');
@@ -413,6 +413,16 @@
             right: 0;
         }
 
+        .chat-interface.minimized {
+            height: 80px;
+            overflow: hidden;
+        }
+
+        .chat-interface.expanded {
+            width: 90vw;
+            max-width: 1200px;
+        }
+
         .chat-overlay {
             position: fixed;
             inset: 0;
@@ -442,6 +452,62 @@
             justify-content: space-between;
             position: relative;
             z-index: 1;
+        }
+
+        .chat-controls {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+
+        .chat-control-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            color: var(--brand-white);
+            width: 40px;
+            height: 40px;
+            border-radius: var(--retro-border-radius);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            font-size: 0.875rem;
+        }
+
+        .chat-control-btn:hover {
+            background: var(--brand-orange);
+            border-color: var(--brand-orange);
+            transform: scale(1.05);
+        }
+
+        .message-actions {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 0.75rem;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .message:hover .message-actions {
+            opacity: 1;
+        }
+
+        .action-btn {
+            background: var(--brand-gray-lightest);
+            border: 1px solid var(--brand-gray-lighter);
+            color: var(--brand-gray);
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.75rem;
+            transition: all 0.2s ease;
+        }
+
+        .action-btn:hover {
+            background: var(--brand-orange);
+            color: var(--brand-white);
+            border-color: var(--brand-orange);
         }
 
         .chat-title {
@@ -1017,9 +1083,23 @@
                         <p id="chatAgentStatus">Ready to help you succeed</p>
                     </div>
                 </div>
-                <button class="close-chat" onclick="closeChat()">
-                    <i class="fas fa-times"></i>
-                </button>
+                <div class="chat-controls">
+                    <button class="chat-control-btn" onclick="downloadChat()" title="Download Chat">
+                        <i class="fas fa-download"></i>
+                    </button>
+                    <button class="chat-control-btn" onclick="copyChat()" title="Copy Chat">
+                        <i class="fas fa-copy"></i>
+                    </button>
+                    <button class="chat-control-btn" onclick="toggleExpand()" title="Expand/Collapse" id="expandBtn">
+                        <i class="fas fa-expand"></i>
+                    </button>
+                    <button class="chat-control-btn" onclick="toggleMinimize()" title="Minimize" id="minimizeBtn">
+                        <i class="fas fa-minus"></i>
+                    </button>
+                    <button class="chat-control-btn" onclick="closeChat()" title="Close">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
             </div>
         </div>
 
@@ -1107,6 +1187,8 @@
         let conversationHistory = [];
         let userCredits = parseInt(localStorage.getItem('userCredits')) || 50;
         let isTyping = false;
+        let isExpanded = false;
+        let isMinimized = false;
 
         function init() {
             updateCreditDisplay();
@@ -1232,10 +1314,35 @@
         function addMessage(text, sender, icon) {
             const messagesContainer = document.getElementById('chatMessages');
             
+            // Better text formatting that actually creates proper breaks
+            let formattedText = text
+                // Convert numbered lists to proper format with line breaks
+                .replace(/(\d+\.\s[^0-9]*?)(?=\d+\.|$)/g, '<div style="margin-bottom: 12px;">$1</div>')
+                // Convert bullet points and dashes to proper bullets with breaks
+                .replace(/^[\-\•]\s(.+)/gm, '<div style="margin-bottom: 8px;">• $1</div>')
+                // Convert markdown bold to HTML
+                .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                // Convert markdown italic to HTML  
+                .replace(/\*(.*?)\*/g, '<em>$1</em>')
+                // Convert double line breaks to paragraph breaks
+                .replace(/\n\n/g, '</p><p style="margin-bottom: 12px;">')
+                // Convert single line breaks to breaks
+                .replace(/\n/g, '<br>')
+                // Wrap the whole thing in a paragraph if it doesn't have one
+                .replace(/^(?!<p|<div)/, '<p style="margin-bottom: 12px;">')
+                .replace(/(?<!<\/p>|<\/div>)$/, '</p>');
+            
+            const messageId = 'msg-' + Date.now() + '-' + Math.random().toString(36).substr(2, 9);
+            
             const messageHTML = `
-                <div class="message ${sender}">
+                <div class="message ${sender}" id="${messageId}">
                     <div class="message-avatar">${icon}</div>
-                    <div class="message-content">${text}</div>
+                    <div class="message-content">
+                        ${formattedText}
+                        <div class="message-actions">
+                            <button class="action-btn" onclick="copyMessage('${messageId}')">Copy</button>
+                        </div>
+                    </div>
                     <div class="message-time">${getCurrentTime()}</div>
                 </div>
             `;
@@ -1288,6 +1395,121 @@
 
         function getCurrentTime() {
             return new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+        }
+
+        function copyMessage(messageId) {
+            const messageElement = document.getElementById(messageId);
+            const contentElement = messageElement.querySelector('.message-content');
+            const textContent = contentElement.innerText || contentElement.textContent;
+            
+            navigator.clipboard.writeText(textContent).then(() => {
+                // Show brief feedback
+                const btn = messageElement.querySelector('.action-btn');
+                const originalText = btn.textContent;
+                btn.textContent = 'Copied!';
+                setTimeout(() => {
+                    btn.textContent = originalText;
+                }, 1000);
+            }).catch(() => {
+                // Fallback for older browsers
+                const textArea = document.createElement('textarea');
+                textArea.value = textContent;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+            });
+        }
+
+        function copyChat() {
+            const messagesContainer = document.getElementById('chatMessages');
+            const messages = messagesContainer.querySelectorAll('.message');
+            let chatText = `${agents[currentAgent].name} Conversation\n`;
+            chatText += `Generated on ${new Date().toLocaleDateString()} at ${new Date().toLocaleTimeString()}\n\n`;
+            
+            messages.forEach(message => {
+                const isUser = message.classList.contains('user');
+                const content = message.querySelector('.message-content');
+                const time = message.querySelector('.message-time');
+                const textContent = content.innerText || content.textContent;
+                
+                chatText += `${isUser ? 'You' : agents[currentAgent].name} (${time.textContent}):\n`;
+                chatText += `${textContent.trim()}\n\n`;
+            });
+            
+            navigator.clipboard.writeText(chatText).then(() => {
+                alert('Chat copied to clipboard!');
+            }).catch(() => {
+                // Fallback for older browsers
+                const textArea = document.createElement('textarea');
+                textArea.value = chatText;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                alert('Chat copied to clipboard!');
+            });
+        }
+
+        function downloadChat() {
+            const messagesContainer = document.getElementById('chatMessages');
+            const messages = messagesContainer.querySelectorAll('.message');
+            let chatText = `${agents[currentAgent].name} Conversation\n`;
+            chatText += `Generated on ${new Date().toLocaleDateString()} at ${new Date().toLocaleTimeString()}\n\n`;
+            
+            messages.forEach(message => {
+                const isUser = message.classList.contains('user');
+                const content = message.querySelector('.message-content');
+                const time = message.querySelector('.message-time');
+                const textContent = content.innerText || content.textContent;
+                
+                chatText += `${isUser ? 'You' : agents[currentAgent].name} (${time.textContent}):\n`;
+                chatText += `${textContent.trim()}\n\n`;
+            });
+            
+            const blob = new Blob([chatText], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `${agents[currentAgent].name.replace(/\s+/g, '_')}_Chat_${new Date().toISOString().split('T')[0]}.txt`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        function toggleExpand() {
+            const chatInterface = document.getElementById('chatInterface');
+            const expandBtn = document.getElementById('expandBtn');
+            
+            isExpanded = !isExpanded;
+            
+            if (isExpanded) {
+                chatInterface.classList.add('expanded');
+                expandBtn.innerHTML = '<i class="fas fa-compress"></i>';
+                expandBtn.title = 'Collapse';
+            } else {
+                chatInterface.classList.remove('expanded');
+                expandBtn.innerHTML = '<i class="fas fa-expand"></i>';
+                expandBtn.title = 'Expand';
+            }
+        }
+
+        function toggleMinimize() {
+            const chatInterface = document.getElementById('chatInterface');
+            const minimizeBtn = document.getElementById('minimizeBtn');
+            
+            isMinimized = !isMinimized;
+            
+            if (isMinimized) {
+                chatInterface.classList.add('minimized');
+                minimizeBtn.innerHTML = '<i class="fas fa-plus"></i>';
+                minimizeBtn.title = 'Restore';
+            } else {
+                chatInterface.classList.remove('minimized');
+                minimizeBtn.innerHTML = '<i class="fas fa-minus"></i>';
+                minimizeBtn.title = 'Minimize';
+            }
         }
 
         document.addEventListener('DOMContentLoaded', init);
