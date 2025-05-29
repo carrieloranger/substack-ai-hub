@@ -1,0 +1,1315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Substack 360 AI Agent Hub</title>
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%23333333'/><rect x='80' y='0' width='20' height='20' fill='%23ff6719'/><text x='50' y='40' font-family='Arial' font-size='14' font-weight='bold' text-anchor='middle' fill='%23333333'>S360</text><text x='50' y='80' font-family='Arial' font-size='32' font-weight='900' text-anchor='middle' fill='%23ff6719'>AI</text></svg>">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Playfair+Display:wght@400;500;600;700;800;900&display=swap');
+
+        :root {
+            --brand-orange: #ff6719;
+            --brand-white: #ffffff;
+            --brand-gray: #333333;
+            --brand-light-gray: #484848;
+            --brand-light-orange: #ffe8d3;
+            --brand-orange-light: rgba(255, 103, 25, 0.1);
+            --brand-orange-medium: rgba(255, 103, 25, 0.2);
+            --brand-orange-dark: #e55a16;
+            --brand-gray-light: #666666;
+            --brand-gray-lighter: #999999;
+            --brand-gray-lightest: #f5f5f5;
+            --shadow-sm: 0 1px 2px 0 rgba(51, 51, 51, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(51, 51, 51, 0.1), 0 2px 4px -2px rgba(51, 51, 51, 0.1);
+            --shadow-lg: 0 10px 15px -3px rgba(51, 51, 51, 0.1), 0 4px 6px -4px rgba(51, 51, 51, 0.1);
+            --shadow-xl: 0 20px 25px -5px rgba(51, 51, 51, 0.1), 0 8px 10px -6px rgba(51, 51, 51, 0.1);
+            --shadow-2xl: 0 25px 50px -12px rgba(51, 51, 51, 0.25);
+            --retro-border-radius: 8px;
+            --retro-border-radius-lg: 16px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--brand-white);
+            min-height: 100vh;
+            color: var(--brand-gray);
+            line-height: 1.6;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(45deg, var(--brand-orange-light) 25%, transparent 25%),
+                linear-gradient(-45deg, var(--brand-orange-light) 25%, transparent 25%),
+                linear-gradient(45deg, transparent 75%, var(--brand-orange-light) 75%),
+                linear-gradient(-45deg, transparent 75%, var(--brand-orange-light) 75%);
+            background-size: 60px 60px;
+            background-position: 0 0, 0 30px, 30px -30px, -30px 0px;
+            opacity: 0.03;
+            z-index: -1;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 3rem 2rem;
+        }
+
+        /* Header */
+        .header {
+            text-align: center;
+            margin-bottom: 5rem;
+            position: relative;
+        }
+
+        .brand-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 2rem;
+            margin-bottom: 2.5rem;
+        }
+
+        .brand-logo {
+            width: 160px;
+            height: 100px;
+            background: var(--brand-white);
+            border: 3px solid var(--brand-gray);
+            border-radius: var(--retro-border-radius);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            box-shadow: var(--shadow-xl);
+            overflow: hidden;
+        }
+
+        .brand-logo::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 0;
+            height: 0;
+            border-left: 30px solid transparent;
+            border-top: 30px solid var(--brand-orange);
+        }
+
+        .logo-text {
+            font-family: 'Inter', sans-serif;
+            font-size: 1.3rem;
+            font-weight: 800;
+            color: var(--brand-gray);
+            text-align: center;
+            line-height: 1.1;
+            letter-spacing: -0.02em;
+        }
+
+        .logo-360 {
+            color: var(--brand-orange);
+            font-size: 2.1rem;
+            font-weight: 900;
+            display: block;
+            margin-top: -0.1rem;
+            letter-spacing: -0.05em;
+        }
+
+        .header h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(2.5rem, 5vw, 4.5rem);
+            font-weight: 800;
+            color: var(--brand-gray);
+            margin-bottom: 1.5rem;
+            line-height: 1.1;
+        }
+
+        .header .highlight {
+            color: var(--brand-orange);
+            position: relative;
+        }
+
+        .header p {
+            font-size: 1.25rem;
+            color: var(--brand-light-gray);
+            font-weight: 400;
+            max-width: 700px;
+            margin: 0 auto 2rem;
+        }
+
+        .header-stats {
+            display: flex;
+            justify-content: center;
+            gap: 4rem;
+            margin-top: 2rem;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-family: 'Playfair Display', serif;
+            font-size: 3rem;
+            font-weight: 800;
+            color: var(--brand-orange);
+            line-height: 1;
+            display: block;
+        }
+
+        .stat-label {
+            font-size: 0.875rem;
+            color: var(--brand-gray-light);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-top: 0.5rem;
+            font-weight: 600;
+        }
+
+        /* Credit Display */
+        .credit-bar {
+            background: var(--brand-gray-lightest);
+            border: 2px solid var(--brand-gray-lighter);
+            border-radius: var(--retro-border-radius-lg);
+            padding: 1.5rem;
+            margin-bottom: 3rem;
+            text-align: center;
+        }
+
+        .credit-info {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .credit-count {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--brand-orange);
+        }
+
+        .credit-label {
+            color: var(--brand-gray-light);
+            font-size: 0.875rem;
+        }
+
+        .upgrade-btn {
+            background: var(--brand-orange);
+            color: var(--brand-white);
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: var(--retro-border-radius);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .upgrade-btn:hover {
+            background: var(--brand-orange-dark);
+            transform: translateY(-2px);
+        }
+
+        /* Agents Grid */
+        .agents-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 2rem;
+            margin-bottom: 4rem;
+        }
+
+        .agent-card {
+            background: var(--brand-white);
+            border: 2px solid var(--brand-gray-lightest);
+            border-radius: var(--retro-border-radius-lg);
+            padding: 2.5rem;
+            position: relative;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            overflow: hidden;
+        }
+
+        .agent-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, var(--brand-orange) 0%, var(--brand-light-orange) 100%);
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.4s ease;
+        }
+
+        .agent-card:hover {
+            transform: translateY(-8px);
+            box-shadow: var(--shadow-2xl);
+            border-color: var(--brand-orange);
+        }
+
+        .agent-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .agent-card.active {
+            border-color: var(--brand-orange);
+            background: var(--brand-light-orange);
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-xl);
+        }
+
+        .agent-card.active::before {
+            transform: scaleX(1);
+        }
+
+        .agent-header {
+            display: flex;
+            align-items: flex-start;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .agent-icon {
+            width: 80px;
+            height: 80px;
+            background: var(--brand-orange);
+            border-radius: var(--retro-border-radius);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            color: var(--brand-white);
+            position: relative;
+            flex-shrink: 0;
+            box-shadow: var(--shadow-md);
+        }
+
+        .agent-icon::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            right: -4px;
+            width: 20px;
+            height: 20px;
+            background: var(--brand-gray);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .agent-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--brand-gray);
+            line-height: 1.2;
+            margin-bottom: 0.5rem;
+        }
+
+        .agent-subtitle {
+            font-size: 0.875rem;
+            color: var(--brand-orange);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .agent-description {
+            color: var(--brand-light-gray);
+            line-height: 1.6;
+            margin-bottom: 2rem;
+            font-size: 1rem;
+        }
+
+        .agent-features {
+            list-style: none;
+            display: grid;
+            gap: 1rem;
+        }
+
+        .agent-features li {
+            color: var(--brand-gray-light);
+            font-size: 0.875rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid var(--brand-gray-lightest);
+        }
+
+        .agent-features li:last-child {
+            border-bottom: none;
+        }
+
+        .agent-features li::before {
+            content: '✓';
+            width: 24px;
+            height: 24px;
+            background: var(--brand-orange);
+            color: var(--brand-white);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+
+        .agent-cta {
+            position: absolute;
+            bottom: 2rem;
+            right: 2rem;
+            background: var(--brand-orange);
+            color: var(--brand-white);
+            border: none;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: var(--shadow-md);
+        }
+
+        .agent-cta:hover {
+            transform: scale(1.1);
+            box-shadow: var(--shadow-lg);
+        }
+
+        /* Chat Interface */
+        .chat-interface {
+            position: fixed;
+            top: 0;
+            right: -100%;
+            width: min(700px, 100vw);
+            height: 100vh;
+            background: var(--brand-white);
+            box-shadow: var(--shadow-2xl);
+            z-index: 1000;
+            transition: right 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            flex-direction: column;
+            border-left: 4px solid var(--brand-orange);
+        }
+
+        .chat-interface.active {
+            right: 0;
+        }
+
+        .chat-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(51, 51, 51, 0.6);
+            z-index: 999;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(4px);
+        }
+
+        .chat-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .chat-header {
+            background: var(--brand-gray);
+            padding: 2rem;
+            color: var(--brand-white);
+            position: relative;
+        }
+
+        .chat-header-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: relative;
+            z-index: 1;
+        }
+
+        .chat-title {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .chat-agent-icon {
+            width: 60px;
+            height: 60px;
+            background: var(--brand-orange);
+            border-radius: var(--retro-border-radius);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: var(--brand-white);
+            box-shadow: var(--shadow-md);
+        }
+
+        .chat-agent-info h3 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .chat-agent-info p {
+            font-size: 0.875rem;
+            opacity: 0.8;
+            color: var(--brand-orange);
+            font-weight: 500;
+        }
+
+        .close-chat {
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            color: var(--brand-white);
+            width: 50px;
+            height: 50px;
+            border-radius: var(--retro-border-radius);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .close-chat:hover {
+            background: var(--brand-orange);
+            border-color: var(--brand-orange);
+            transform: scale(1.05);
+        }
+
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 2rem;
+            background: var(--brand-gray-lightest);
+            scroll-behavior: smooth;
+        }
+
+        .message {
+            margin-bottom: 2rem;
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+            animation: slideIn 0.4s ease;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .message.user {
+            flex-direction: row-reverse;
+        }
+
+        .message-avatar {
+            width: 45px;
+            height: 45px;
+            border-radius: var(--retro-border-radius);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            flex-shrink: 0;
+            border: 2px solid var(--brand-white);
+            box-shadow: var(--shadow-md);
+        }
+
+        .message.ai .message-avatar {
+            background: var(--brand-orange);
+            color: var(--brand-white);
+        }
+
+        .message.user .message-avatar {
+            background: var(--brand-gray);
+            color: var(--brand-white);
+        }
+
+        .message-content {
+            background: var(--brand-white);
+            padding: 1.5rem 2rem;
+            border-radius: var(--retro-border-radius-lg);
+            max-width: 80%;
+            box-shadow: var(--shadow-sm);
+            position: relative;
+            line-height: 1.6;
+            border: 1px solid var(--brand-gray-lightest);
+        }
+
+        .message.user .message-content {
+            background: var(--brand-orange);
+            color: var(--brand-white);
+            border-color: var(--brand-orange);
+        }
+
+        .message-time {
+            font-size: 0.75rem;
+            color: var(--brand-gray-lighter);
+            margin-top: 0.75rem;
+            text-align: center;
+            font-weight: 500;
+        }
+
+        /* Typing Indicator */
+        .typing-indicator {
+            margin-bottom: 2rem;
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+        }
+
+        .typing-indicator .message-avatar {
+            width: 45px;
+            height: 45px;
+            border-radius: var(--retro-border-radius);
+            background: var(--brand-orange);
+            color: var(--brand-white);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            flex-shrink: 0;
+            border: 2px solid var(--brand-white);
+            box-shadow: var(--shadow-md);
+        }
+
+        .typing-dots-container {
+            background: var(--brand-white);
+            padding: 1.5rem 2rem;
+            border-radius: var(--retro-border-radius-lg);
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--brand-gray-lightest);
+        }
+
+        .typing-dots {
+            display: flex;
+            gap: 6px;
+            align-items: center;
+        }
+
+        .typing-dot {
+            width: 10px;
+            height: 10px;
+            background: var(--brand-orange);
+            border-radius: 50%;
+            animation: typingPulse 1.4s infinite;
+        }
+
+        .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+        .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+
+        @keyframes typingPulse {
+            0%, 60%, 100% { opacity: 0.3; transform: scale(0.8); }
+            30% { opacity: 1; transform: scale(1.2); }
+        }
+
+        /* Chat Input */
+        .chat-input-container {
+            padding: 2rem;
+            background: var(--brand-white);
+            border-top: 2px solid var(--brand-gray-lightest);
+        }
+
+        .quick-prompts {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            overflow-x: auto;
+            padding-bottom: 0.5rem;
+        }
+
+        .quick-prompt {
+            background: var(--brand-gray-lightest);
+            border: 2px solid transparent;
+            padding: 0.75rem 1.5rem;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 0.875rem;
+            white-space: nowrap;
+            transition: all 0.3s ease;
+            color: var(--brand-gray-light);
+            font-weight: 500;
+        }
+
+        .quick-prompt:hover {
+            background: var(--brand-orange);
+            color: var(--brand-white);
+            border-color: var(--brand-orange);
+            transform: translateY(-2px);
+        }
+
+        .input-wrapper {
+            display: flex;
+            gap: 1rem;
+            align-items: flex-end;
+            background: var(--brand-gray-lightest);
+            border: 2px solid transparent;
+            border-radius: var(--retro-border-radius-lg);
+            padding: 1rem 1.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .input-wrapper:focus-within {
+            background: var(--brand-white);
+            border-color: var(--brand-orange);
+            box-shadow: var(--shadow-md);
+        }
+
+        .chat-input {
+            flex: 1;
+            border: none;
+            background: none;
+            outline: none;
+            font-size: 1rem;
+            resize: none;
+            min-height: 24px;
+            max-height: 120px;
+            line-height: 1.5;
+            font-family: inherit;
+            color: var(--brand-gray);
+        }
+
+        .chat-input::placeholder {
+            color: var(--brand-gray-lighter);
+        }
+
+        .send-btn {
+            background: var(--brand-orange);
+            border: none;
+            width: 50px;
+            height: 50px;
+            border-radius: var(--retro-border-radius);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            color: var(--brand-white);
+            box-shadow: var(--shadow-md);
+        }
+
+        .send-btn:hover:not(:disabled) {
+            transform: scale(1.05);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .send-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .container {
+                padding: 2rem 1rem;
+            }
+
+            .brand-container {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .brand-logo {
+                width: 100px;
+                height: 100px;
+            }
+
+            .agents-grid {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+
+            .agent-card {
+                padding: 2rem;
+            }
+
+            .header-stats {
+                gap: 2rem;
+            }
+
+            .credit-info {
+                gap: 1rem;
+            }
+
+            .chat-interface {
+                width: 100vw;
+            }
+
+            .message-content {
+                max-width: 90%;
+            }
+
+            .quick-prompts {
+                gap: 0.5rem;
+            }
+        }
+
+        /* Custom Scrollbar */
+        .chat-messages::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .chat-messages::-webkit-scrollbar-track {
+            background: var(--brand-gray-lightest);
+            border-radius: 4px;
+        }
+
+        .chat-messages::-webkit-scrollbar-thumb {
+            background: var(--brand-orange);
+            border-radius: 4px;
+        }
+
+        .chat-messages::-webkit-scrollbar-thumb:hover {
+            background: var(--brand-orange-dark);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <div class="brand-container">
+                <div class="brand-logo">
+                    <div class="logo-text">
+                        Substack
+                        <span class="logo-360">360</span>
+                    </div>
+                </div>
+            </div>
+            <h1>AI Agent <span class="highlight">Hub</span></h1>
+            <p>Your premium AI assistant suite designed to accelerate Substack success with intelligent, specialized agents that understand your business.</p>
+            
+            <div class="header-stats">
+                <div class="stat-item">
+                    <span class="stat-number">8</span>
+                    <div class="stat-label">Expert Agents</div>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number">24/7</span>
+                    <div class="stat-label">Available</div>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number">∞</span>
+                    <div class="stat-label">Possibilities</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Credit Bar -->
+        <div class="credit-bar">
+            <div class="credit-info">
+                <div>
+                    <span class="credit-count" id="creditCount">50</span>
+                    <div class="credit-label">Credits Remaining</div>
+                </div>
+                <div class="credit-label">Resets monthly • 1 credit per conversation</div>
+                <a href="#" class="upgrade-btn" onclick="showUpgradeOptions()">Get More Credits</a>
+            </div>
+        </div>
+
+        <!-- Agents Grid -->
+        <div class="agents-grid">
+            <div class="agent-card" data-agent="strategy" onclick="openAgent('strategy')">
+                <div class="agent-header">
+                    <div class="agent-icon">🎯</div>
+                    <div>
+                        <div class="agent-title">STRATEGY Agent</div>
+                        <div class="agent-subtitle">Profitable Niche Discovery</div>
+                    </div>
+                </div>
+                <div class="agent-description">Find your profitable niche at the intersection of your expertise, market demand, and monetization potential using the proven Substack 360 framework.</div>
+                <ul class="agent-features">
+                    <li>Expertise audit and skill monetization mapping</li>
+                    <li>Market demand analysis and opportunity sizing</li>
+                    <li>Competition assessment and differentiation strategy</li>
+                    <li>Revenue potential evaluation and niche validation</li>
+                </ul>
+                <button class="agent-cta">
+                    <i class="fas fa-arrow-right"></i>
+                </button>
+            </div>
+
+            <div class="agent-card" data-agent="traffic" onclick="openAgent('traffic')">
+                <div class="agent-header">
+                    <div class="agent-icon">🚀</div>
+                    <div>
+                        <div class="agent-title">TRAFFIC Agent</div>
+                        <div class="agent-subtitle">Profile Optimization</div>
+                    </div>
+                </div>
+                <div class="agent-description">Transform your Substack profile into a subscriber-converting engine with strategic optimization techniques that turn visitors into loyal readers.</div>
+                <ul class="agent-features">
+                    <li>Profile headline and bio optimization for conversions</li>
+                    <li>About page strategy that builds trust and authority</li>
+                    <li>Welcome series and onboarding sequence design</li>
+                    <li>Social proof integration and credibility building</li>
+                </ul>
+                <button class="agent-cta">
+                    <i class="fas fa-arrow-right"></i>
+                </button>
+            </div>
+
+            <div class="agent-card" data-agent="assets" onclick="openAgent('assets')">
+                <div class="agent-header">
+                    <div class="agent-icon">✍️</div>
+                    <div>
+                        <div class="agent-title">ASSETS Agent</div>
+                        <div class="agent-subtitle">Content Creation</div>
+                    </div>
+                </div>
+                <div class="agent-description">Create compelling content efficiently with proven frameworks from Substack 360 that save time while maintaining quality and engagement.</div>
+                <ul class="agent-features">
+                    <li>Newsletter content templates and frameworks</li>
+                    <li>Engaging subject lines and headlines that get opened</li>
+                    <li>Story-driven content that builds connection</li>
+                    <li>Content calendar planning and batch creation systems</li>
+                </ul>
+                <button class="agent-cta">
+                    <i class="fas fa-arrow-right"></i>
+                </button>
+            </div>
+
+            <div class="agent-card" data-agent="community" onclick="openAgent('community')">
+                <div class="agent-header">
+                    <div class="agent-icon">👥</div>
+                    <div>
+                        <div class="agent-title">COMMUNITY Agent</div>
+                        <div class="agent-subtitle">Audience Growth</div>
+                    </div>
+                </div>
+                <div class="agent-description">Build your audience systematically with focused growth strategies that deliver consistent results and turn readers into a thriving community.</div>
+                <ul class="agent-features">
+                    <li>Subscriber acquisition strategies and growth tactics</li>
+                    <li>Engagement optimization to boost reader loyalty</li>
+                    <li>Community building techniques that create connection</li>
+                    <li>Referral systems and word-of-mouth growth strategies</li>
+                </ul>
+                <button class="agent-cta">
+                    <i class="fas fa-arrow-right"></i>
+                </button>
+            </div>
+
+            <div class="agent-card" data-agent="kaching" onclick="openAgent('kaching')">
+                <div class="agent-header">
+                    <div class="agent-icon">💰</div>
+                    <div>
+                        <div class="agent-title">KA-CHING Agent</div>
+                        <div class="agent-subtitle">Revenue Generation</div>
+                    </div>
+                </div>
+                <div class="agent-description">Learn multiple revenue approaches successful creators use beyond just subscriptions - from digital products to coaching offers that sell.</div>
+                <ul class="agent-features">
+                    <li>Digital product creation and pricing strategies</li>
+                    <li>Coaching and consulting offer development</li>
+                    <li>Partnership and collaboration opportunities</li>
+                    <li>Multiple revenue stream optimization and scaling</li>
+                </ul>
+                <button class="agent-cta">
+                    <i class="fas fa-arrow-right"></i>
+                </button>
+            </div>
+
+            <div class="agent-card" data-agent="systems" onclick="openAgent('systems')">
+                <div class="agent-header">
+                    <div class="agent-icon">⚙️</div>
+                    <div>
+                        <div class="agent-title">SYSTEMS Agent</div>
+                        <div class="agent-subtitle">Process Automation</div>
+                    </div>
+                </div>
+                <div class="agent-description">Implement processes that prevent creator fatigue and maintain consistency for long-term success with automated systems and workflows.</div>
+                <ul class="agent-features">
+                    <li>Content workflow automation and scheduling</li>
+                    <li>Email sequence setup for subscriber nurturing</li>
+                    <li>Analytics tracking and performance optimization</li>
+                    <li>Time management systems for sustainable growth</li>
+                </ul>
+                <button class="agent-cta">
+                    <i class="fas fa-arrow-right"></i>
+                </button>
+            </div>
+
+            <div class="agent-card" data-agent="headlines" onclick="openAgent('headlines')">
+                <div class="agent-header">
+                    <div class="agent-icon">📝</div>
+                    <div>
+                        <div class="agent-title">Headlines Specialist</div>
+                        <div class="agent-subtitle">Subject Line Mastery</div>
+                    </div>
+                </div>
+                <div class="agent-description">Craft magnetic headlines and subject lines that dramatically increase your open rates using psychological triggers and proven copywriting techniques.</div>
+                <ul class="agent-features">
+                    <li>Subject line formulas that boost open rates</li>
+                    <li>Headline psychology and emotional triggers</li>
+                    <li>A/B testing strategies for optimization</li>
+                    <li>Industry-specific headline frameworks and templates</li>
+                </ul>
+                <button class="agent-cta">
+                    <i class="fas fa-arrow-right"></i>
+                </button>
+            </div>
+
+            <div class="agent-card" data-agent="visuals" onclick="openAgent('visuals')">
+                <div class="agent-header">
+                    <div class="agent-icon">🎨</div>
+                    <div>
+                        <div class="agent-title">Visual Creator</div>
+                        <div class="agent-subtitle">Brand Design</div>
+                    </div>
+                </div>
+                <div class="agent-description">Generate stunning, brand-consistent visuals for your Substack that capture attention and reinforce your message across all platforms and newsletters.</div>
+                <ul class="agent-features">
+                    <li>Newsletter header and featured image creation</li>
+                    <li>Social media graphics for content promotion</li>
+                    <li>Brand-consistent visual templates and assets</li>
+                    <li>Visual storytelling elements that enhance engagement</li>
+                </ul>
+                <button class="agent-cta">
+                    <i class="fas fa-arrow-right"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Chat Overlay -->
+    <div class="chat-overlay" id="chatOverlay" onclick="closeChat()"></div>
+
+    <!-- Chat Interface -->
+    <div class="chat-interface" id="chatInterface">
+        <div class="chat-header">
+            <div class="chat-header-content">
+                <div class="chat-title">
+                    <div class="chat-agent-icon" id="chatAgentIcon">🤖</div>
+                    <div class="chat-agent-info">
+                        <h3 id="chatAgentName">AI Assistant</h3>
+                        <p id="chatAgentStatus">Ready to help you succeed</p>
+                    </div>
+                </div>
+                <button class="close-chat" onclick="closeChat()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+        </div>
+
+        <div class="chat-messages" id="chatMessages"></div>
+
+        <div class="chat-input-container">
+            <div class="quick-prompts" id="quickPrompts"></div>
+            <div class="input-wrapper">
+                <textarea class="chat-input" id="chatInput" placeholder="Ask me anything about growing your Substack..." rows="1"></textarea>
+                <button class="send-btn" id="sendBtn" onclick="sendMessage()">
+                    <i class="fas fa-paper-plane"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Agent configurations
+        const agents = {
+            strategy: {
+                name: "STRATEGY Agent",
+                icon: "🎯",
+                status: "Finding your profitable niche",
+                prompts: ["Help me find my niche", "Analyze market demand", "Evaluate my expertise", "Research competitors"],
+                greeting: "I'm your STRATEGY Agent! I'll help you discover your profitable niche at the intersection of your expertise, market demand, and monetization potential. Let's find the perfect positioning for your Substack success. What expertise or knowledge do you want to monetize?"
+            },
+            traffic: {
+                name: "TRAFFIC Agent",
+                icon: "🚀",
+                status: "Optimizing your profile",
+                prompts: ["Optimize my Substack profile", "Write compelling bio", "Create welcome series", "Improve conversions"],
+                greeting: "I'm your TRAFFIC Agent! I specialize in transforming your Substack profile into a subscriber-converting engine. From headlines to welcome sequences, I'll help you optimize every element that turns visitors into loyal readers. What part of your profile needs work?"
+            },
+            assets: {
+                name: "ASSETS Agent",
+                icon: "✍️",
+                status: "Creating compelling content",
+                prompts: ["Write newsletter content", "Create content templates", "Plan content calendar", "Develop frameworks"],
+                greeting: "I'm your ASSETS Agent! I'll help you create compelling content efficiently using proven Substack 360 frameworks. Whether you need newsletter ideas, templates, or content systems, I'll save you time while maintaining quality. What type of content do you need help with?"
+            },
+            community: {
+                name: "COMMUNITY Agent",
+                icon: "👥",
+                status: "Building your audience",
+                prompts: ["Grow my subscribers", "Increase engagement", "Build community", "Create referral systems"],
+                greeting: "I'm your COMMUNITY Agent! I specialize in systematic audience building with focused growth strategies that deliver consistent results. Let's turn your readers into a thriving, engaged community that grows itself. What's your current subscriber growth challenge?"
+            },
+            kaching: {
+                name: "KA-CHING Agent",
+                icon: "💰",
+                status: "Generating multiple revenue streams",
+                prompts: ["Create digital products", "Design coaching offers", "Build partnerships", "Scale revenue"],
+                greeting: "I'm your KA-CHING Agent! I'll help you learn multiple revenue approaches that successful creators use beyond just subscriptions. From digital products to coaching offers, let's build the income streams that will transform your Substack. What revenue opportunity interests you most?"
+            },
+            systems: {
+                name: "SYSTEMS Agent",
+                icon: "⚙️",
+                status: "Automating your processes",
+                prompts: ["Automate my workflow", "Create email sequences", "Set up analytics", "Build sustainable systems"],
+                greeting: "I'm your SYSTEMS Agent! I'll help you implement processes that prevent creator fatigue and maintain consistency for long-term success. Let's build the automated systems and workflows that will keep your Substack running smoothly. What's taking up too much of your time right now?"
+            },
+            headlines: {
+                name: "Headlines Specialist",
+                icon: "📝",
+                status: "Crafting magnetic subject lines",
+                prompts: ["Write subject lines", "Create headlines", "Boost open rates", "Test variations"],
+                greeting: "I'm your Headlines Specialist! I craft magnetic headlines and subject lines that dramatically increase your open rates using psychological triggers and proven techniques. Great headlines make the difference between success and being ignored. What headlines do you need help with?"
+            },
+            visuals: {
+                name: "Visual Creator",
+                icon: "🎨",
+                status: "Designing brand visuals",
+                prompts: ["Create newsletter headers", "Design social graphics", "Build visual templates", "Brand consistency"],
+                greeting: "I'm your Visual Creator! I'll help you generate stunning, brand-consistent visuals for your Substack that capture attention and reinforce your message. From newsletter headers to social promotion graphics, let's make your content visually compelling. What visuals do you need?"
+            }
+        };
+
+        // State management
+        let currentAgent = null;
+        let conversationHistory = [];
+        let userCredits = parseInt(localStorage.getItem('userCredits')) || 50;
+        let isTyping = false;
+
+        // Initialize the app
+        function init() {
+            updateCreditDisplay();
+            
+            // Auto-resize chat input
+            const chatInput = document.getElementById('chatInput');
+            chatInput.addEventListener('input', function() {
+                this.style.height = 'auto';
+                this.style.height = Math.min(this.scrollHeight, 120) + 'px';
+            });
+
+            // Enter key handler
+            chatInput.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    sendMessage();
+                }
+            });
+        }
+
+        // Open agent chat
+        function openAgent(agentType) {
+            if (userCredits <= 0) {
+                showUpgradeOptions();
+                return;
+            }
+
+            currentAgent = agentType;
+            const agent = agents[agentType];
+            conversationHistory = [];
+            
+            // Update chat interface
+            document.getElementById('chatAgentIcon').textContent = agent.icon;
+            document.getElementById('chatAgentName').textContent = agent.name;
+            document.getElementById('chatAgentStatus').textContent = agent.status;
+            
+            // Clear messages and add greeting
+            const messagesContainer = document.getElementById('chatMessages');
+            messagesContainer.innerHTML = '';
+            addMessage(agent.greeting, 'ai', agent.icon);
+            
+            // Update quick prompts
+            const quickPromptsContainer = document.getElementById('quickPrompts');
+            quickPromptsContainer.innerHTML = agent.prompts.map(prompt => 
+                `<button class="quick-prompt" onclick="useQuickPrompt('${prompt}')">${prompt}</button>`
+            ).join('');
+            
+            // Show chat interface
+            document.getElementById('chatInterface').classList.add('active');
+            document.getElementById('chatOverlay').classList.add('active');
+            
+            // Highlight active agent
+            document.querySelectorAll('.agent-card').forEach(c => c.classList.remove('active'));
+            document.querySelector(`[data-agent="${agentType}"]`).classList.add('active');
+            
+            // Focus input
+            setTimeout(() => {
+                document.getElementById('chatInput').focus();
+            }, 400);
+        }
+
+        // Close chat
+        function closeChat() {
+            document.getElementById('chatInterface').classList.remove('active');
+            document.getElementById('chatOverlay').classList.remove('active');
+            document.querySelectorAll('.agent-card').forEach(c => c.classList.remove('active'));
+            currentAgent = null;
+            conversationHistory = [];
+        }
+
+        // Use quick prompt
+        function useQuickPrompt(prompt) {
+            const chatInput = document.getElementById('chatInput');
+            chatInput.value = prompt;
+            chatInput.style.height = 'auto';
+            chatInput.style.height = Math.min(chatInput.scrollHeight, 120) + 'px';
+            sendMessage();
+        }
+
+        // Send message to AI
+        async function sendMessage() {
+            const input = document.getElementById('chatInput');
+            const message = input.value.trim();
+            
+            if (!message || isTyping) return;
+            
+            if (userCredits <= 0) {
+                showUpgradeOptions();
+                return;
+            }
+            
+            // Add user message
+            addMessage(message, 'user', '👤');
+            
+            // Add to conversation history
+            conversationHistory.push({ role: 'user', content: message });
+            
+            // Clear input
+            input.value = '';
+            input.style.height = 'auto';
+            
+            // Show typing indicator
+            showTypingIndicator();
+            
+            try {
+                // Call AI function
+                const response = await fetch('/.netlify/functions/chat', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        agentType: currentAgent,
+                        message: message,
+                        conversationHistory: conversationHistory
+                    })
+                });
+
+                const data = await response.json();
+                
+                if (!response.ok) {
+                    throw new Error(data.error || 'Something went wrong');
+                }
+
+                // Hide typing indicator
+                hideTypingIndicator();
+                
+                // Add AI response
+                const agent = agents[currentAgent];
+                addMessage(data.message, 'ai', agent.icon);
+                
+                // Add to conversation history
+                conversationHistory.push({ role: 'assistant', content: data.message });
+                
+                // Deduct credit
+                userCredits--;
+                localStorage.setItem('userCredits', userCredits.toString());
+                updateCreditDisplay();
+                
+            } catch (error) {
+                hideTypingIndicator();
+                addMessage('Sorry, I encountered an error. Please try again.', 'ai', '❌');
+                console.error('Error:', error);
+            }
+        }
+
+        // Add message to chat
+        function addMessage(text, sender, icon) {
+            const messagesContainer = document.getElementById('chatMessages');
+            
+            const messageHTML = `
+                <div class="message ${sender}">
+                    <div class="message-avatar">${icon}</div>
+                    <div class="message-content">${text}</div>
+                    <div class="message-time">${getCurrentTime()}</div>
+                </div>
+            `;
+            
+            messagesContainer.insertAdjacentHTML('beforeend', messageHTML);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+
+        // Show typing indicator
+        function showTypingIndicator() {
+            isTyping = true;
+            const messagesContainer = document.getElementById('chatMessages');
+            const agent = agents[currentAgent];
+            
+            const typingHTML = `
+                <div class="typing-indicator" id="typingIndicator">
+                    <div class="message-avatar">${agent.icon}</div>
+                    <div class="typing-dots-container">
+                        <div class="typing-dots">
+                            <div class="typing-dot"></div>
+                            <div class="typing-dot"></div>
+                            <div class="typing-dot"></div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            messagesContainer.insertAdjacentHTML('beforeend', typingHTML);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+
+        // Hide typing indicator
+        function hideTypingIndicator() {
+            isTyping = false;
+            const typingIndicator = document.getElementById('typingIndicator');
+            if (typingIndicator) {
+                typingIndicator.remove();
+            }
+        }
+
+        // Update credit display
+        function updateCreditDisplay() {
+            document.getElementById('creditCount').textContent = userCredits;
+            
+            if (userCredits <= 5) {
+                document.getElementById('creditCount').style.color = 'var(--brand-orange)';
+            }
+        }
+
+        // Show upgrade options
+        function showUpgradeOptions() {
+            alert('💳 Upgrade Your Credits\n\n200 Credits - $29\n500 Credits - $59\nUnlimited Monthly - $47\n\n✉️ Contact support to upgrade!\nsupport@substack360.com');
+        }
+
+        // Get current time
+        function getCurrentTime() {
+            return new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+        }
+
+        // Initialize when page loads
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>
