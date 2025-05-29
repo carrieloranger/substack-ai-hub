@@ -1144,9 +1144,7 @@
             addMessage(agent.greeting, 'ai', agent.icon);
             
             const quickPromptsContainer = document.getElementById('quickPrompts');
-            quickPromptsContainer.innerHTML = agent.prompts.map(prompt => 
-                `<button class="quick-prompt" onclick="useQuickPrompt('${prompt}')">${prompt}</button>`
-            ).join('');
+            quickPromptsContainer.innerHTML = ''; // Remove all quick prompts - users can just type what they want
             
             document.getElementById('chatInterface').classList.add('active');
             document.getElementById('chatOverlay').classList.add('active');
