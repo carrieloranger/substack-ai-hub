@@ -1,4 +1,469 @@
-.chat-agent-info h3 {
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Substack 360 AI Agent Hub</title>
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%23333333'/><rect x='80' y='0' width='20' height='20' fill='%23ff6719'/><text x='50' y='40' font-family='Arial' font-size='14' font-weight='bold' text-anchor='middle' fill='%23333333'>S360</text><text x='50' y='80' font-family='Arial' font-size='32' font-weight='900' text-anchor='middle' fill='%23ff6719'>AI</text></svg>">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Playfair+Display:wght@400;500;600;700;800;900&display=swap');
+
+        :root {
+            --brand-orange: #ff6719;
+            --brand-white: #ffffff;
+            --brand-gray: #333333;
+            --brand-light-gray: #484848;
+            --brand-light-orange: #ffe8d3;
+            --brand-orange-light: rgba(255, 103, 25, 0.1);
+            --brand-orange-medium: rgba(255, 103, 25, 0.2);
+            --brand-orange-dark: #e55a16;
+            --brand-gray-light: #666666;
+            --brand-gray-lighter: #999999;
+            --brand-gray-lightest: #f5f5f5;
+            --shadow-sm: 0 1px 2px 0 rgba(51, 51, 51, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(51, 51, 51, 0.1), 0 2px 4px -2px rgba(51, 51, 51, 0.1);
+            --shadow-lg: 0 10px 15px -3px rgba(51, 51, 51, 0.1), 0 4px 6px -4px rgba(51, 51, 51, 0.1);
+            --shadow-xl: 0 20px 25px -5px rgba(51, 51, 51, 0.1), 0 8px 10px -6px rgba(51, 51, 51, 0.1);
+            --shadow-2xl: 0 25px 50px -12px rgba(51, 51, 51, 0.25);
+            --retro-border-radius: 8px;
+            --retro-border-radius-lg: 16px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--brand-white);
+            min-height: 100vh;
+            color: var(--brand-gray);
+            line-height: 1.6;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(45deg, var(--brand-orange-light) 25%, transparent 25%),
+                linear-gradient(-45deg, var(--brand-orange-light) 25%, transparent 25%),
+                linear-gradient(45deg, transparent 75%, var(--brand-orange-light) 75%),
+                linear-gradient(-45deg, transparent 75%, var(--brand-orange-light) 75%);
+            background-size: 60px 60px;
+            background-position: 0 0, 0 30px, 30px -30px, -30px 0px;
+            opacity: 0.03;
+            z-index: -1;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 3rem 2rem;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 5rem;
+            position: relative;
+        }
+
+        .brand-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 2rem;
+            margin-bottom: 2.5rem;
+        }
+
+        .brand-logo {
+            width: 160px;
+            height: 100px;
+            background: var(--brand-white);
+            border: 3px solid var(--brand-gray);
+            border-radius: var(--retro-border-radius);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            box-shadow: var(--shadow-xl);
+            overflow: hidden;
+        }
+
+        .brand-logo::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 0;
+            height: 0;
+            border-left: 30px solid transparent;
+            border-top: 30px solid var(--brand-orange);
+        }
+
+        .logo-text {
+            font-family: 'Inter', sans-serif;
+            font-size: 1.3rem;
+            font-weight: 800;
+            color: var(--brand-gray);
+            text-align: center;
+            line-height: 1.1;
+            letter-spacing: -0.02em;
+        }
+
+        .logo-360 {
+            color: var(--brand-orange);
+            font-size: 2.1rem;
+            font-weight: 900;
+            display: block;
+            margin-top: -0.1rem;
+            letter-spacing: -0.05em;
+        }
+
+        .header h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(2.5rem, 5vw, 4.5rem);
+            font-weight: 800;
+            color: var(--brand-gray);
+            margin-bottom: 1.5rem;
+            line-height: 1.1;
+        }
+
+        .header .highlight {
+            color: var(--brand-orange);
+            position: relative;
+        }
+
+        .header p {
+            font-size: 1.25rem;
+            color: var(--brand-light-gray);
+            font-weight: 400;
+            max-width: 700px;
+            margin: 0 auto 2rem;
+        }
+
+        .header-stats {
+            display: flex;
+            justify-content: center;
+            gap: 4rem;
+            margin-top: 2rem;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-family: 'Playfair Display', serif;
+            font-size: 3rem;
+            font-weight: 800;
+            color: var(--brand-orange);
+            line-height: 1;
+            display: block;
+        }
+
+        .stat-label {
+            font-size: 0.875rem;
+            color: var(--brand-gray-light);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-top: 0.5rem;
+            font-weight: 600;
+        }
+
+        .credit-bar {
+            background: var(--brand-gray-lightest);
+            border: 2px solid var(--brand-gray-lighter);
+            border-radius: var(--retro-border-radius-lg);
+            padding: 1.5rem;
+            margin-bottom: 3rem;
+            text-align: center;
+        }
+
+        .credit-info {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .credit-count {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--brand-orange);
+        }
+
+        .credit-label {
+            color: var(--brand-gray-light);
+            font-size: 0.875rem;
+        }
+
+        .upgrade-btn {
+            background: var(--brand-orange);
+            color: var(--brand-white);
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: var(--retro-border-radius);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .upgrade-btn:hover {
+            background: var(--brand-orange-dark);
+            transform: translateY(-2px);
+        }
+
+        .agents-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 2rem;
+            margin-bottom: 4rem;
+        }
+
+        .agent-card {
+            background: var(--brand-white);
+            border: 2px solid var(--brand-gray-lightest);
+            border-radius: var(--retro-border-radius-lg);
+            padding: 2.5rem;
+            position: relative;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            overflow: hidden;
+        }
+
+        .agent-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, var(--brand-orange) 0%, var(--brand-light-orange) 100%);
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.4s ease;
+        }
+
+        .agent-card:hover {
+            transform: translateY(-8px);
+            box-shadow: var(--shadow-2xl);
+            border-color: var(--brand-orange);
+        }
+
+        .agent-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .agent-card.active {
+            border-color: var(--brand-orange);
+            background: var(--brand-light-orange);
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-xl);
+        }
+
+        .agent-card.active::before {
+            transform: scaleX(1);
+        }
+
+        .agent-header {
+            display: flex;
+            align-items: flex-start;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .agent-icon {
+            width: 80px;
+            height: 80px;
+            background: var(--brand-orange);
+            border-radius: var(--retro-border-radius);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            color: var(--brand-white);
+            position: relative;
+            flex-shrink: 0;
+            box-shadow: var(--shadow-md);
+        }
+
+        .agent-icon::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            right: -4px;
+            width: 20px;
+            height: 20px;
+            background: var(--brand-gray);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .agent-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--brand-gray);
+            line-height: 1.2;
+            margin-bottom: 0.5rem;
+        }
+
+        .agent-subtitle {
+            font-size: 0.875rem;
+            color: var(--brand-orange);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .agent-description {
+            color: var(--brand-light-gray);
+            line-height: 1.6;
+            margin-bottom: 2rem;
+            font-size: 1rem;
+        }
+
+        .agent-features {
+            list-style: none;
+            display: grid;
+            gap: 1rem;
+        }
+
+        .agent-features li {
+            color: var(--brand-gray-light);
+            font-size: 0.875rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid var(--brand-gray-lightest);
+        }
+
+        .agent-features li:last-child {
+            border-bottom: none;
+        }
+
+        .agent-features li::before {
+            content: '✓';
+            width: 24px;
+            height: 24px;
+            background: var(--brand-orange);
+            color: var(--brand-white);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+
+        .agent-cta {
+            position: absolute;
+            bottom: 2rem;
+            right: 2rem;
+            background: var(--brand-orange);
+            color: var(--brand-white);
+            border: none;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: var(--shadow-md);
+        }
+
+        .agent-cta:hover {
+            transform: scale(1.1);
+            box-shadow: var(--shadow-lg);
+        }
+
+        /* Chat Interface Styles */
+        .chat-interface {
+            position: fixed;
+            top: 0;
+            right: -100%;
+            width: min(700px, 100vw);
+            height: 100vh;
+            background: var(--brand-white);
+            box-shadow: var(--shadow-2xl);
+            z-index: 1000;
+            transition: right 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            flex-direction: column;
+            border-left: 4px solid var(--brand-orange);
+        }
+
+        .chat-interface.active {
+            right: 0;
+        }
+
+        .chat-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(51, 51, 51, 0.6);
+            z-index: 999;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(4px);
+        }
+
+        .chat-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .chat-header {
+            background: var(--brand-gray);
+            padding: 2rem;
+            color: var(--brand-white);
+            position: relative;
+        }
+
+        .chat-header-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: relative;
+            z-index: 1;
+        }
+
+        .chat-title {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .chat-agent-icon {
+            width: 60px;
+            height: 60px;
+            background: var(--brand-orange);
+            border-radius: var(--retro-border-radius);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: var(--brand-white);
+            box-shadow: var(--shadow-md);
+        }
+
+        .chat-agent-info h3 {
             font-family: 'Playfair Display', serif;
             font-size: 1.5rem;
             font-weight: 600;
@@ -830,466 +1295,4 @@
         document.addEventListener('DOMContentLoaded', init);
     </script>
 </body>
-</html><!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Substack 360 AI Agent Hub</title>
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%23333333'/><rect x='80' y='0' width='20' height='20' fill='%23ff6719'/><text x='50' y='40' font-family='Arial' font-size='14' font-weight='bold' text-anchor='middle' fill='%23333333'>S360</text><text x='50' y='80' font-family='Arial' font-size='32' font-weight='900' text-anchor='middle' fill='%23ff6719'>AI</text></svg>">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Playfair+Display:wght@400;500;600;700;800;900&display=swap');
-
-        :root {
-            --brand-orange: #ff6719;
-            --brand-white: #ffffff;
-            --brand-gray: #333333;
-            --brand-light-gray: #484848;
-            --brand-light-orange: #ffe8d3;
-            --brand-orange-light: rgba(255, 103, 25, 0.1);
-            --brand-orange-medium: rgba(255, 103, 25, 0.2);
-            --brand-orange-dark: #e55a16;
-            --brand-gray-light: #666666;
-            --brand-gray-lighter: #999999;
-            --brand-gray-lightest: #f5f5f5;
-            --shadow-sm: 0 1px 2px 0 rgba(51, 51, 51, 0.05);
-            --shadow-md: 0 4px 6px -1px rgba(51, 51, 51, 0.1), 0 2px 4px -2px rgba(51, 51, 51, 0.1);
-            --shadow-lg: 0 10px 15px -3px rgba(51, 51, 51, 0.1), 0 4px 6px -4px rgba(51, 51, 51, 0.1);
-            --shadow-xl: 0 20px 25px -5px rgba(51, 51, 51, 0.1), 0 8px 10px -6px rgba(51, 51, 51, 0.1);
-            --shadow-2xl: 0 25px 50px -12px rgba(51, 51, 51, 0.25);
-            --retro-border-radius: 8px;
-            --retro-border-radius-lg: 16px;
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-            background: var(--brand-white);
-            min-height: 100vh;
-            color: var(--brand-gray);
-            line-height: 1.6;
-        }
-
-        body::before {
-            content: '';
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-image: 
-                linear-gradient(45deg, var(--brand-orange-light) 25%, transparent 25%),
-                linear-gradient(-45deg, var(--brand-orange-light) 25%, transparent 25%),
-                linear-gradient(45deg, transparent 75%, var(--brand-orange-light) 75%),
-                linear-gradient(-45deg, transparent 75%, var(--brand-orange-light) 75%);
-            background-size: 60px 60px;
-            background-position: 0 0, 0 30px, 30px -30px, -30px 0px;
-            opacity: 0.03;
-            z-index: -1;
-        }
-
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 3rem 2rem;
-        }
-
-        .header {
-            text-align: center;
-            margin-bottom: 5rem;
-            position: relative;
-        }
-
-        .brand-container {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 2rem;
-            margin-bottom: 2.5rem;
-        }
-
-        .brand-logo {
-            width: 160px;
-            height: 100px;
-            background: var(--brand-white);
-            border: 3px solid var(--brand-gray);
-            border-radius: var(--retro-border-radius);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            position: relative;
-            box-shadow: var(--shadow-xl);
-            overflow: hidden;
-        }
-
-        .brand-logo::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            right: 0;
-            width: 0;
-            height: 0;
-            border-left: 30px solid transparent;
-            border-top: 30px solid var(--brand-orange);
-        }
-
-        .logo-text {
-            font-family: 'Inter', sans-serif;
-            font-size: 1.3rem;
-            font-weight: 800;
-            color: var(--brand-gray);
-            text-align: center;
-            line-height: 1.1;
-            letter-spacing: -0.02em;
-        }
-
-        .logo-360 {
-            color: var(--brand-orange);
-            font-size: 2.1rem;
-            font-weight: 900;
-            display: block;
-            margin-top: -0.1rem;
-            letter-spacing: -0.05em;
-        }
-
-        .header h1 {
-            font-family: 'Playfair Display', serif;
-            font-size: clamp(2.5rem, 5vw, 4.5rem);
-            font-weight: 800;
-            color: var(--brand-gray);
-            margin-bottom: 1.5rem;
-            line-height: 1.1;
-        }
-
-        .header .highlight {
-            color: var(--brand-orange);
-            position: relative;
-        }
-
-        .header p {
-            font-size: 1.25rem;
-            color: var(--brand-light-gray);
-            font-weight: 400;
-            max-width: 700px;
-            margin: 0 auto 2rem;
-        }
-
-        .header-stats {
-            display: flex;
-            justify-content: center;
-            gap: 4rem;
-            margin-top: 2rem;
-        }
-
-        .stat-item {
-            text-align: center;
-        }
-
-        .stat-number {
-            font-family: 'Playfair Display', serif;
-            font-size: 3rem;
-            font-weight: 800;
-            color: var(--brand-orange);
-            line-height: 1;
-            display: block;
-        }
-
-        .stat-label {
-            font-size: 0.875rem;
-            color: var(--brand-gray-light);
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-top: 0.5rem;
-            font-weight: 600;
-        }
-
-        .credit-bar {
-            background: var(--brand-gray-lightest);
-            border: 2px solid var(--brand-gray-lighter);
-            border-radius: var(--retro-border-radius-lg);
-            padding: 1.5rem;
-            margin-bottom: 3rem;
-            text-align: center;
-        }
-
-        .credit-info {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 2rem;
-            flex-wrap: wrap;
-        }
-
-        .credit-count {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: var(--brand-orange);
-        }
-
-        .credit-label {
-            color: var(--brand-gray-light);
-            font-size: 0.875rem;
-        }
-
-        .upgrade-btn {
-            background: var(--brand-orange);
-            color: var(--brand-white);
-            border: none;
-            padding: 0.75rem 1.5rem;
-            border-radius: var(--retro-border-radius);
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            text-decoration: none;
-            display: inline-block;
-        }
-
-        .upgrade-btn:hover {
-            background: var(--brand-orange-dark);
-            transform: translateY(-2px);
-        }
-
-        .agents-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
-            gap: 2rem;
-            margin-bottom: 4rem;
-        }
-
-        .agent-card {
-            background: var(--brand-white);
-            border: 2px solid var(--brand-gray-lightest);
-            border-radius: var(--retro-border-radius-lg);
-            padding: 2.5rem;
-            position: relative;
-            cursor: pointer;
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            overflow: hidden;
-        }
-
-        .agent-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 4px;
-            background: linear-gradient(90deg, var(--brand-orange) 0%, var(--brand-light-orange) 100%);
-            transform: scaleX(0);
-            transform-origin: left;
-            transition: transform 0.4s ease;
-        }
-
-        .agent-card:hover {
-            transform: translateY(-8px);
-            box-shadow: var(--shadow-2xl);
-            border-color: var(--brand-orange);
-        }
-
-        .agent-card:hover::before {
-            transform: scaleX(1);
-        }
-
-        .agent-card.active {
-            border-color: var(--brand-orange);
-            background: var(--brand-light-orange);
-            transform: translateY(-4px);
-            box-shadow: var(--shadow-xl);
-        }
-
-        .agent-card.active::before {
-            transform: scaleX(1);
-        }
-
-        .agent-header {
-            display: flex;
-            align-items: flex-start;
-            gap: 1.5rem;
-            margin-bottom: 2rem;
-        }
-
-        .agent-icon {
-            width: 80px;
-            height: 80px;
-            background: var(--brand-orange);
-            border-radius: var(--retro-border-radius);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 2rem;
-            color: var(--brand-white);
-            position: relative;
-            flex-shrink: 0;
-            box-shadow: var(--shadow-md);
-        }
-
-        .agent-icon::after {
-            content: '';
-            position: absolute;
-            bottom: -4px;
-            right: -4px;
-            width: 20px;
-            height: 20px;
-            background: var(--brand-gray);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .agent-title {
-            font-family: 'Playfair Display', serif;
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: var(--brand-gray);
-            line-height: 1.2;
-            margin-bottom: 0.5rem;
-        }
-
-        .agent-subtitle {
-            font-size: 0.875rem;
-            color: var(--brand-orange);
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        .agent-description {
-            color: var(--brand-light-gray);
-            line-height: 1.6;
-            margin-bottom: 2rem;
-            font-size: 1rem;
-        }
-
-        .agent-features {
-            list-style: none;
-            display: grid;
-            gap: 1rem;
-        }
-
-        .agent-features li {
-            color: var(--brand-gray-light);
-            font-size: 0.875rem;
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            padding: 0.75rem 0;
-            border-bottom: 1px solid var(--brand-gray-lightest);
-        }
-
-        .agent-features li:last-child {
-            border-bottom: none;
-        }
-
-        .agent-features li::before {
-            content: '✓';
-            width: 24px;
-            height: 24px;
-            background: var(--brand-orange);
-            color: var(--brand-white);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.75rem;
-            font-weight: bold;
-            flex-shrink: 0;
-        }
-
-        .agent-cta {
-            position: absolute;
-            bottom: 2rem;
-            right: 2rem;
-            background: var(--brand-orange);
-            color: var(--brand-white);
-            border: none;
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: var(--shadow-md);
-        }
-
-        .agent-cta:hover {
-            transform: scale(1.1);
-            box-shadow: var(--shadow-lg);
-        }
-
-        /* Chat Interface Styles */
-        .chat-interface {
-            position: fixed;
-            top: 0;
-            right: -100%;
-            width: min(700px, 100vw);
-            height: 100vh;
-            background: var(--brand-white);
-            box-shadow: var(--shadow-2xl);
-            z-index: 1000;
-            transition: right 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            display: flex;
-            flex-direction: column;
-            border-left: 4px solid var(--brand-orange);
-        }
-
-        .chat-interface.active {
-            right: 0;
-        }
-
-        .chat-overlay {
-            position: fixed;
-            inset: 0;
-            background: rgba(51, 51, 51, 0.6);
-            z-index: 999;
-            opacity: 0;
-            visibility: hidden;
-            transition: all 0.3s ease;
-            backdrop-filter: blur(4px);
-        }
-
-        .chat-overlay.active {
-            opacity: 1;
-            visibility: visible;
-        }
-
-        .chat-header {
-            background: var(--brand-gray);
-            padding: 2rem;
-            color: var(--brand-white);
-            position: relative;
-        }
-
-        .chat-header-content {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            position: relative;
-            z-index: 1;
-        }
-
-        .chat-title {
-            display: flex;
-            align-items: center;
-            gap: 1.5rem;
-        }
-
-        .chat-agent-icon {
-            width: 60px;
-            height: 60px;
-            background: var(--brand-orange);
-            border-radius: var(--retro-border-radius);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.5rem;
-            color: var(--brand-white);
-            box-shadow: var(--shadow-md);
+</html>
